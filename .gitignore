@@ -1,0 +1,28 @@
+# Quarto build output (Do NOT commit the generated site, let CI/CD build it)
+/_site/
+/.quarto/
+
+# Python & Jupyter
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+*.egg-info/
+
+# Virtual Environments
+.env
+.venv/
+venv/
+env/
+
+# IDE settings (VS Code, JetBrains)
+.vscode/
+.idea/
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# Sensitive Data (Crucial for security!)
+*.env
+secret.json
+credentials.py
