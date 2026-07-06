@@ -99,7 +99,10 @@ plan:
   cherry-pick: git switch -c <suggested-branch> <target> && git cherry-pick <h1> <h2>
   or rebase: git rebase -i <base>  # reorder → group these, `pick` them contiguous
 
-## SUBJECT 2: ...
+## SUBJECT 2: <name> — feat|fix|refactor|concept
+> depends on: [SUBJECT 1: <name>](#subject-1-name--featfixrefactorconcept)
+commits (order):
+  ...
 
 ## ALREADY IN TARGET (drop from plan)
   <hz> <subject> — patch-equivalent in <target> (git cherry `-`); verify: git show <hz>
@@ -130,7 +133,18 @@ PR topology:
 
 Keep prose caveman. Hashes, branch names, commands verbatim and correct.
 
-### 6. Command correctness
+**Dependency callout rule:** Any subject that depends on another must open with a `> depends on:` blockquote listing markdown links to each prerequisite subject's header (using GitHub-style anchor: lowercase, spaces→hyphens, punctuation stripped). Example: `> depends on: [SUBJECT 1: my-feature](#subject-1-my-feature--feat)`. Place this immediately after the `## SUBJECT N:` heading line, before `commits (order):`.
+
+### 6. Write report to file
+
+1. Determine output filename: `commit-regroup-{branch_name}({start-short-commit-id}-{end-short-commit-id}).md`
+   - `branch_name` = head branch name (slashes replaced with `_`)
+   - `start-short-commit-id` = short hash of oldest commit in range (base-side)
+   - `end-short-commit-id` = short hash of newest commit in range (HEAD-side)
+2. Write the full report to `tmp/<filename>` in the workspace root.
+3. Tell user: `report → tmp/<filename>`
+
+### 7. Command correctness
 - Cherry-pick plan: always `git switch -c <newbranch> <target>` then `git cherry-pick <hashes in chronological order>`.
 - If subjects have deps, cherry-pick dependency subject first (or onto same branch in order).
 - Interactive-rebase plan: `git rebase -i <base>`; tell user to reorder lines so each subject's `pick`s are contiguous; mention `--onto <target>` when moving whole subject off current base.
@@ -144,4 +158,6 @@ Keep prose caveman. Hashes, branch names, commands verbatim and correct.
 - Cross-subject shared files are listed with same-line (overlap → couple/stack) vs different-line (disjoint → safe) distinction.
 - Every subject has a concrete cherry-pick OR rebase command with real hashes.
 - Dependency order stated where it matters.
+- Every subject with deps opens with a `> depends on:` blockquote containing markdown anchor links to prerequisite subject headers.
+- Report written to `tmp/commit-regroup-{branch_name}({start}-{end}).md` and path reported to user.
 - No mutating git command was executed.
