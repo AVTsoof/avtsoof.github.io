@@ -25,13 +25,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install Quarto
-        uses: quarto-dev/quarto-actions/setup@v2
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+          cache: 'pip'
 
-      - name: Render Quarto Project
+      - name: Install dependencies
         run: |
-          quarto render
-          # By default, this creates a folder named '_site'
+          pip install -r requirements.txt
+
+      - name: Build site
+        run: |
+          mkdocs build
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -39,7 +45,7 @@ jobs:
       - name: Upload Pages Artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: _site/
+          path: site/
 
       - name: Deploy to GitHub Pages
         id: deployment
