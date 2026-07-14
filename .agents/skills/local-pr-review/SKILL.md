@@ -1,43 +1,41 @@
 ---
 name: local-pr-review
 description: 'Review a local branch diff as if it were a PR — terse, actionable findings plus an intent/why/what/how/problems report. Use when asked to review a branch, review a diff, do a local PR review, or act as a code reviewer on local changes.'
-argument-hint: '<headBranch> [baseBranch=main]'
+argument-hint: '<headBranch> [baseBranch=main] [free-text intent/description] [--skip-tests | "skip tests" | "no pytest" | similar]'
 ---
 
 # Local PR Review
 
-Review the changes on the head branch (the feature branch to review) compared to the base branch (defaults to `main`). Use the branch names provided as arguments; if the base branch is omitted, assume `main`. If no head branch is given, use the current branch.
+Review head branch (feature branch) vs base branch (default `main`). Branch names come from arguments. Base omitted, assume `main`. No head given, use current branch.
 
-Treat it as a pull request and act as the reviewer.
+User may add free-text description of intended change, expected behavior, or review focus. Use it to interpret diff and judge whether implementation matches stated intent.
+
+Treat as pull request, act as reviewer. Intent, scope, or success criteria still unclear after reading diff + description? Ask concise clarification questions before finishing.
+
+Skip-tests trigger: `--skip-tests`, "skip tests", "no pytest", "don't run tests", or similar phrasing. When triggered, skip all pytest steps and section 3.
 
 ## Scope
 
-- Diff the two branches locally (use the merge-base: `git diff <base>...<head>`). Read the full diff and the surrounding code you need to understand it.
-- **Only reflect on the changes**, not on pre-existing code from before this branch.
-- If pre-existing code is what forced the author to make a change the way they did, **note that and give them slack** — flag it as a nit at most, not a blocker.
-- Create a markdown report file at `tmp/local-pr-review-{source_branch}({short-commit-id})_{target_branch}({short-commit-id}).md`.
+- Diff branches locally at merge-base: `git diff <base>...<head>`. Read full diff plus surrounding code needed to understand it.
+- **Only reflect on the changes**, not pre-existing code from before this branch.
+- Pre-existing code forced the author's approach? **Note it, give slack** — nit at most, not a blocker.
+- Write markdown report to `tmp/local-pr-review-{source_branch}({short-commit-id})_{target_branch}({short-commit-id}).md`.
+- Unless skip-tests triggered, run pytest for touched areas (see **Pytest**), save to `tmp/local-pr-review-{source_branch}({short-commit-id})_{target_branch}({short-commit-id})-pytest.txt`.
 
 ## Output
 
-Write the final report as clean, readable Markdown.
+Clean, readable Markdown. Section headings in the order below. Short paragraphs and bullets. Fenced code blocks only for commands or snippets. Consistent terminology and severity labels.
 
-- Use clear section headings in the same order as defined below.
-- Use short paragraphs and bullet lists where they improve scanability.
-- Keep line lengths reasonable and avoid dense text blocks.
-- Use fenced code blocks only when showing commands or snippets.
-- Keep terminology and severity labels consistent throughout the report.
+### 1. Intent & Summary (compact bullet list)
 
-### 1. Intent & Summary (short narrative)
-
-- **What** the branch does (the actual change).
-- **Why** it was done (the problem it solves).
-- **How** it was done (approach / key mechanisms), referencing the relevant files and functions.
+- **What** the branch does.
+- **Why** problem it solves.
+- **How** approach / key mechanisms, referencing relevant files and functions.
 - One honest line on overall direction.
-- Prefer a compact bullet list for this section (4-6 bullets total).
 
 ### 2. Findings (terse, one line per finding)
 
-Follow the caveman-review style — terse and actionable. One line per finding: location, problem, fix. No throat-clearing.
+Caveman-review style: terse, actionable. One line each: location, problem, fix. No throat-clearing.
 
 **Format:** `<file>:L<line>: <severity>: <problem>. <fix>.`
 
@@ -46,26 +44,47 @@ Follow the caveman-review style — terse and actionable. One line per finding: 
 - `🟡 risk:` — works but fragile (race, missing null check, swallowed error, magic number, latent trap)
 - `🔵 nit:` — style, naming, micro-optim, dead code. Author can ignore
 - `❓ q:` — genuine question, not a suggestion
-- `✅ good:` — call out a notably good change (sparingly)
+- `✅ good:` — notably good change (sparingly)
 
 **Rules:**
 - Exact line numbers, exact symbol names in backticks.
 - Concrete fix, not "consider refactoring".
-- Include the *why* only if it isn't obvious from the problem statement.
-- Drop hedging ("perhaps", "maybe", "I think") — if unsure, use `q:`.
-- Don't restate what the line does — the reader can read the diff.
-- Distinguish **active bugs** from **latent/hypothetical** issues (say which). If something is safe today only because of an unrelated code path, say so and downgrade the severity.
-- Put the 3-5 highest-priority pre-merge checks first in this section (items most likely to cause crashes, data corruption, or incorrect results), each with file links.
-- Note "slack given" inline in the relevant finding (typically as `🔵 nit:`), instead of using a separate section.
-- Keep exactly one finding per line for fast scanning.
+- Include the *why* only when not obvious from the problem.
+- No hedging ("perhaps", "maybe", "I think") — if unsure, use `q:`.
+- Don't restate what the line does.
+- Distinguish **active bugs** from **latent/hypothetical** issues. Safe today only via an unrelated code path? Say so, downgrade severity.
+- Put the 3-5 highest-priority pre-merge checks first (crashes, data corruption, wrong results), each with file links.
+- Note "slack given" inline in the relevant finding (usually `🔵 nit:`), no separate section.
 
-**Auto-clarity exception:** For security findings (CVE-class), architectural disagreements, or where the author is new, write a normal paragraph with rationale, then resume terse.
+**Auto-clarity exception:** For security findings (CVE-class), architectural disagreements, or a new author, write a normal paragraph with rationale, then resume terse.
 
-### 3. Architectural / Global notes (only when needed)
+### 3. Test Results (skip when skip-tests triggered)
 
-Only add this section for cross-cutting architectural observations or global constraints that do not fit a single finding.
-Use concise bullet points in this section.
+- One-line summary: passed / failed / errored / skipped.
+- Per failing/errored test: name, one-line error, classification (see **Pytest** for definitions).
+- Link full output: `[pytest results](./local-pr-review-{source_branch}({short-commit-id})_{target_branch}({short-commit-id})-pytest.txt)`.
+
+### 4. Architectural / Global notes (only when needed)
+
+Cross-cutting observations or global constraints that don't fit a single finding. Concise bullets.
+
+## Pytest
+
+Run before writing the report, unless skip-tests triggered.
+
+1. Identify touched Python modules from the diff. Files under `tests/` are the test targets, not source.
+2. Map each changed module to its tests:
+   - Test file under `tests/` mirroring the module path (`ml/models/foo.py` matches `tests/ml/models/test_foo.py`).
+   - Any test file importing or referencing a changed symbol.
+3. Run only those files:
+   ```
+   pytest <matched-test-files> -v --tb=short 2>&1 | tee tmp/local-pr-review-{source_branch}({short-commit-id})_{target_branch}({short-commit-id})-pytest.txt
+   ```
+4. No matching files found: note it in the report, skip the run.
+5. Classify each failing test:
+   - **Stale test** — asserts old behaviour the PR intentionally changed (hardcoded expected value, removed parameter, renamed symbol). Fix the test, not the code.
+   - **Regression** — implementation broken or change introduced a regression.
 
 ## Boundaries
 
-Review only. Do not write the code fix, do not approve/request-changes, do not run linters. Output ready to paste into the PR.
+Review only. No code fix, no approve/request-changes, no linters. Output ready to paste into the PR.
