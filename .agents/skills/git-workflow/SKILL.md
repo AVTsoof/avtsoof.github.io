@@ -50,5 +50,5 @@ description: Use when committing, branching, or integrating work — covers atom
   entrypoint) execs `.githooks/pre-push-main`, which runs `mkdocs build --strict`
   **only** when a push updates `main` **and** touches docs-affecting paths.
   Activated once per clone via `git config core.hooksPath .githooks` (wired into
-  `setup.ps1` / `setup.sh`). Bypass a false positive with `git push --no-verify`;
+  `bootstrap.py`). Bypass a false positive with `git push --no-verify`;
   remote CI runs the same strict build as a backstop.

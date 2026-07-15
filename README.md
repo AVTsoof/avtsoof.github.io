@@ -6,19 +6,21 @@ Pages.
 
 ## Setup
 
-```powershell
-# Windows
-.\setup.ps1
-```
-
 ```bash
-# macOS / Linux
-./setup.sh
+# Windows / macOS / Linux
+python bootstrap.py
 ```
 
 This creates a `.venv`, installs dependencies (including the editable `avtsoof`
 toolkit via `pip install -e .`), and wires the versioned git hooks
 (`core.hooksPath .githooks`).
+
+If a `.venv` already exists, the script asks whether to recreate it or install
+on top of it. Pass `--override` to recreate it without prompting:
+
+```bash
+python bootstrap.py --override
+```
 
 ## Local preview
 

@@ -143,7 +143,7 @@ When in doubt, a rule belongs in a skill (§6), not in `AGENTS.md`.
   **no** `height` argument and **no** `<iframe>`. The deterministic `div_id`
   means an unchanged experiment re-generates a byte-identical file (no git churn).
 - A minimal root `pyproject.toml` makes `avtsoof` importable via
-  `pip install -e .`, run **once** as part of `setup.ps1` / `setup.sh`. No
+  `pip install -e .`, run **once** as part of `bootstrap.py`. No
   per-script `sys.path` hacks, no `cwd` assumptions.
 - The same setup step wires the **versioned git hooks** once via
   `git config core.hooksPath .githooks` (see §11.1), so the pre-push build gate
@@ -347,7 +347,7 @@ hook** runs it automatically — but only when it is actually needed.
   `pre-push`, so `.githooks/pre-push` is a **one-line dispatcher** that execs the
   descriptively-named `.githooks/pre-push-main` (where the real logic lives; both
   committed and reviewable). The hooks are activated once per clone by `git
-  config core.hooksPath .githooks`, wired into `setup.ps1` / `setup.sh` (§5.1).
+  config core.hooksPath .githooks`, wired into `bootstrap.py` (§5.1).
   Nothing is copied into the un-versioned `.git/hooks/`.
 - **Conditional trigger:** the hook only acts when the push **updates `main`**
   (`remote_ref = refs/heads/main`) — pushes to feature branches (e.g.
@@ -363,8 +363,7 @@ hook** runs it automatically — but only when it is actually needed.
 - **Escape hatch:** `git push --no-verify` bypasses it for the rare intentional
   case (and remote CI still runs the same strict build as the backstop).
 - **Portability:** the hook is a POSIX `sh` script; on Windows it runs under the
-  Git-for-Windows bundled shell, so one file covers both `setup.sh` and
-  `setup.ps1` users.
+  Git-for-Windows bundled shell, so one file covers users on every platform.
 
 Sketch:
 
@@ -418,7 +417,7 @@ mkdocs build --strict || {
    `guidelines/Programming_Guidelines.md`.
 2. **Shared toolkit (one-time):** `avtsoof/` (`__init__.py`,
    `common_utils.py` with `REPO_ROOT`, `data_dir()`, `save_fig()`) + minimal
-   `pyproject.toml`; wire `pip install -e .` into `setup.ps1` / `setup.sh` and
+   `pyproject.toml`; wire `pip install -e .` into `bootstrap.py` and
    reference it from `requirements.txt`.
 3. **Blogging doc + LFS skill:** the `README/BLOGGING.md` guideline doc
    (copy-template flow, `build.py` + `save_fig` pattern, data access, site
@@ -426,8 +425,7 @@ mkdocs build --strict || {
    `.agents/skills/git-lfs/scripts/check_lfs.py`.
 4. **Git hygiene files:** `.gitignore` fixes + `.gitattributes` (LFS patterns) +
    `.githooks/pre-push` dispatcher + `.githooks/pre-push-main` (conditional
-   strict-build gate, §11.1) with `core.hooksPath` wired into `setup.ps1` /
-   `setup.sh`.
+   strict-build gate, §11.1) with `core.hooksPath` wired into `bootstrap.py`.
 5. **MkDocs:** Material theme + blog plugin + `exclude_docs` + `nav` + cleanups
    (remove dup root `index.md`/`about.md`, delete `examples/` + `learn/`).
 6. **Scaffolding:** git-ignored `data/` (`.gitkeep` + README); blog landing stub
@@ -479,7 +477,7 @@ mkdocs build --strict || {
 
 Once the structure is implemented, verify it end-to-end yourself:
 
-1. **Fresh setup:** in a clean clone, run `./setup.ps1` (or `setup.sh`). Confirm
+1. **Fresh setup:** in a clean clone, run `python bootstrap.py`. Confirm
    it creates the venv and runs `pip install -e .` without error.
 2. **Toolkit import:** from a *different* folder (e.g. your home dir) run
    `python -c "from avtsoof.common_utils import REPO_ROOT, data_dir, save_fig; print(REPO_ROOT)"`
