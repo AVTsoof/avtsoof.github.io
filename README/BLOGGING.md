@@ -3,6 +3,18 @@
 How to write a post in this repo — for both the author and the agent. A post is
 a self-contained folder; the shared `avtsoof/` toolkit does the plumbing.
 
+## Quickstart (smoke test)
+
+Fastest way to confirm the toolchain works end-to-end:
+
+- Copy the template: `cp -r docs/blog/posts/_template docs/blog/posts/quickstart-test`.
+- Edit `docs/blog/posts/quickstart-test/index.md`: set `date`, `title`, and
+  tweak the body text so the post is recognizable.
+- Serve with live reload: `mkdocs serve` → open http://127.0.0.1:8000/ and find
+  the post in the blog index.
+- Verify the strict build passes: `mkdocs build --strict`.
+- Delete the throwaway folder when done: `rm -r docs/blog/posts/quickstart-test`.
+
 ## New post
 
 1. Copy `docs/blog/posts/_template/` → `docs/blog/posts/<slug>/` (lowercase,
