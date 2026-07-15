@@ -28,12 +28,15 @@ def data_dir(name: str) -> Path:
     return target
 
 
-def save_fig(fig, out: Path) -> str:
+def save_fig(fig, out: Path, height: str = "450px") -> str:
     """Write ``fig`` as an inline Plotly ``<div>`` and return a stable include line.
 
     The ``div_id`` is derived from the output filename, so an unchanged experiment
     reproduces a byte-identical file (no git churn). The returned MkDocs snippet
     line (``--8<-- "..."``) is pasted once into the post's ``index.md``.
+
+    ``height`` is written as a concrete size on the wrapper so the container hugs
+    the plot exactly; a percentage height would leave a gap before the next block.
     """
     out = Path(out)
     out.parent.mkdir(parents=True, exist_ok=True)
@@ -42,5 +45,6 @@ def save_fig(fig, out: Path) -> str:
         include_plotlyjs="cdn",
         full_html=False,
         div_id=out.stem,
+        default_height=height,
     )
     return f'--8<-- "{out.relative_to(DOCS).as_posix()}"'
