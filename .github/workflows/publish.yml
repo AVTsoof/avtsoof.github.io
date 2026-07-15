@@ -37,7 +37,7 @@ jobs:
 
       - name: Build site
         run: |
-          mkdocs build
+          mkdocs build --strict
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
