@@ -2,11 +2,11 @@
 date: 2026-07-15
 title: "Designing a personal website repo"
 tags:
-  - meta
+  - blog
   - mkdocs
   - architecture
 categories:
-  - Meta
+  - Blog
 ---
 
 # Designing a personal website repo
