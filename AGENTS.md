@@ -29,10 +29,10 @@ content grows.*
 
 - **R1 — Posts are self-contained folders:** each post lives in
   `docs/blog/posts/<slug>/` (lowercase, hyphenated) with its `index.md`, optional
-  `build.py`, and `assets/`. *(Detail: `blogging`.)*
+  `build.py`, and `assets/`. *(Detail: `BLOGGING.md`.)*
 - **R2 — Root datastore:** all raw/binary datasets live under root `data/`, which
   is fully git-ignored; never commit raw data under `docs/`. *(Detail:
-  `blogging`.)*
+  `BLOGGING.md`.)*
 - **R3 — Delegation:** load the skill that owns a task before acting; keep this
   file lean — when in doubt, a rule belongs in a skill, not here.
 
@@ -45,5 +45,5 @@ content grows.*
 | Language-agnostic clean code / SRP / robustness | `clean-code` |
 | Python style (pathlib, argparse, typing) | `python-style` |
 | Authoring/splitting skills (minimalism) | `skill-authoring` |
-| Writing a blog post (template, plots, data, boundaries) | `blogging` |
+| Writing a blog post (template, plots, data, boundaries) | `BLOGGING.md` |
 | Large/binary files before commit | `git-lfs` |
