@@ -499,19 +499,3 @@ Once the structure is implemented, verify it end-to-end yourself:
 9. **Ignore checks:** `git check-ignore data site` prints both paths.
 10. **Clean up:** delete `docs/blog/posts/hello-test/` and `data/hello-test/`.
 
-## 16. Post-Implementation Amendments
-
-Refinements decided during and after implementation. The sections above have been
-updated inline to match; they are summarized here for traceability:
-
-- **Blogging is a guideline doc, not a skill.** The how-to-blog content is
-  repo-specific authoring guidance for both the author and the agent, so it lives
-  at `README/BLOGGING.md` (pointed to from `AGENTS.md`) instead of a
-  `.agents/skills/blogging/` skill.
-- **Root `README.md` entry point.** A project overview (setup, local preview, and
-  “where things live” pointers to `AGENTS.md`, `README/BLOGGING.md`, and
-  `.agents/skills/`) was added; longer-form guides live under `README/`.
-- **`AGENTS.md` uses bare filenames.** Pointer references are plain
-  `` `README/BLOGGING.md` `` rather than markdown links, to reduce token usage.
-- **CI runs the strict build.** `.github/workflows/publish.yml` builds with
-  `mkdocs build --strict`, matching the local and pre-push gate.
