@@ -1,7 +1,8 @@
 # Design Spec: Repository Architecture & Agent Rules
 
 - **Date:** 2026-07-14
-- **Status:** Approved (pending final spec review)
+- **Status:** Implemented on `feat/repo-architecture` (§16 records the
+  post-implementation amendments folded back into this spec)
 - **Repo:** `avtsoof.github.io` (MkDocs personal portfolio + research blog)
 
 ## 1. Purpose
@@ -53,6 +54,9 @@ It separates:
 ```text
 avtsoof.github.io/
 ├── AGENTS.md                       # Lean, high-level repo rules + governance
+├── README.md                       # project overview + setup (entry point)
+├── README/
+│   └── BLOGGING.md                 # how-to-blog guideline doc (§6.3)
 ├── .gitattributes                  # Git LFS tracking patterns
 ├── .gitignore                      # data/ ignored; stale Quarto lines removed
 ├── .githooks/                      # versioned hooks; wired via core.hooksPath (once)
@@ -65,7 +69,6 @@ avtsoof.github.io/
 │       ├── clean-code/SKILL.md         # from Programming_Guidelines
 │       ├── python-style/SKILL.md       # from Programming_Guidelines
 │       ├── skill-authoring/SKILL.md    # skill minimalism + when to split
-│       ├── blogging/SKILL.md           # the ONE how-to-blog skill (§6.3)
 │       └── git-lfs/
 │           ├── SKILL.md                # pre-commit LFS check
 │           └── scripts/check_lfs.py    # single-skill helper (co-located)
@@ -111,10 +114,10 @@ When in doubt, a rule belongs in a skill (§6), not in `AGENTS.md`.
 
 - **R1 — Posts are self-contained folders:** each post lives in
   `docs/blog/posts/<slug>/` (lowercase, hyphenated) with its `index.md`, optional
-  `build.py`, and `assets/`. *(Detail: `blogging` skill.)*
+  `build.py`, and `assets/`. *(Detail: `README/BLOGGING.md`.)*
 - **R2 — Root datastore:** all raw/binary datasets live under root `data/`,
   which is fully git-ignored; never committed under `docs/`.
-  *(Detail: `blogging` skill.)*
+  *(Detail: `README/BLOGGING.md`.)*
 - **R3 — Delegation:** `AGENTS.md` points to the thin skills under
   `.agents/skills/`; agents load the relevant skill for the task at hand.
 
@@ -218,8 +221,11 @@ flowchart LR
 - `clean-code` skill — language-agnostic clean-code / SRP / robustness rules.
 - `python-style` skill — Python-specific style (pathlib, argparse, typing).
 
-### 6.3 The one blogging skill
-- `blogging` skill — the single how-to-blog reference, kept thin. Covers:
+### 6.3 The blogging guideline doc
+- `README/BLOGGING.md` — the single how-to-blog reference, kept thin. It is a
+  **guideline doc for both the author and the agent, not a skill** (it is
+  repo-specific authoring guidance rather than a general agent capability);
+  `AGENTS.md` points to it. Covers:
   - **New post:** copy `_template/` → `<slug>/`; fill front matter. Before
     creating, glance at the existing `docs/blog/posts/*/index.md` titles to avoid
     repeating a topic (a quick look, not a tool).
@@ -300,6 +306,8 @@ flowchart LR
 - Because `docs_dir` defaults to `docs/`, root `data/`, `avtsoof/`, and
   `pyproject.toml` are automatically excluded from the build — a documented
   guarantee, not extra config.
+- CI (`.github/workflows/publish.yml`) runs `mkdocs build --strict`, the same
+  build-integrity gate as the local and pre-push builds.
 
 ## 10. Cleanups (existing repo)
 
@@ -402,8 +410,9 @@ mkdocs build --strict || {
 ## 12. Implementation Phases (atomic commits)
 
 0. **Branch:** create `feat/repo-architecture` off `main`. (or check if already exists)
-1. **AGENTS.md + guidelines split:** write lean `AGENTS.md` (directory diagram +
-   invariants R1–R3 + a pointer table to skills — no detailed rules); split
+1. **AGENTS.md + README + guidelines split:** write lean `AGENTS.md` (directory
+   diagram + invariants R1–R3 + a pointer table — no detailed rules) and a root
+   `README.md` entry point (overview, setup, where-things-live pointers); split
    `guidelines/` into `git-workflow`, `gitignore`, `clean-code`, `python-style`
    skills; add `skill-authoring` skill; retire
    `guidelines/Programming_Guidelines.md`.
@@ -411,9 +420,10 @@ mkdocs build --strict || {
    `common_utils.py` with `REPO_ROOT`, `data_dir()`, `save_fig()`) + minimal
    `pyproject.toml`; wire `pip install -e .` into `setup.ps1` / `setup.sh` and
    reference it from `requirements.txt`.
-3. **Blogging + LFS skills:** the single `blogging` skill (copy-template flow,
-   `build.py` + `save_fig` pattern, data access, site boundaries) and the
-   `git-lfs` skill + `.agents/skills/git-lfs/scripts/check_lfs.py`.
+3. **Blogging doc + LFS skill:** the `README/BLOGGING.md` guideline doc
+   (copy-template flow, `build.py` + `save_fig` pattern, data access, site
+   boundaries) and the `git-lfs` skill +
+   `.agents/skills/git-lfs/scripts/check_lfs.py`.
 4. **Git hygiene files:** `.gitignore` fixes + `.gitattributes` (LFS patterns) +
    `.githooks/pre-push` dispatcher + `.githooks/pre-push-main` (conditional
    strict-build gate, §11.1) with `core.hooksPath` wired into `setup.ps1` /
@@ -490,3 +500,20 @@ Once the structure is implemented, verify it end-to-end yourself:
    `superpowers/`, no `*.py`, and no `_template/` path.
 9. **Ignore checks:** `git check-ignore data site` prints both paths.
 10. **Clean up:** delete `docs/blog/posts/hello-test/` and `data/hello-test/`.
+
+## 16. Post-Implementation Amendments
+
+Refinements decided during and after implementation. The sections above have been
+updated inline to match; they are summarized here for traceability:
+
+- **Blogging is a guideline doc, not a skill.** The how-to-blog content is
+  repo-specific authoring guidance for both the author and the agent, so it lives
+  at `README/BLOGGING.md` (pointed to from `AGENTS.md`) instead of a
+  `.agents/skills/blogging/` skill.
+- **Root `README.md` entry point.** A project overview (setup, local preview, and
+  “where things live” pointers to `AGENTS.md`, `README/BLOGGING.md`, and
+  `.agents/skills/`) was added; longer-form guides live under `README/`.
+- **`AGENTS.md` uses bare filenames.** Pointer references are plain
+  `` `README/BLOGGING.md` `` rather than markdown links, to reduce token usage.
+- **CI runs the strict build.** `.github/workflows/publish.yml` builds with
+  `mkdocs build --strict`, matching the local and pre-push gate.
