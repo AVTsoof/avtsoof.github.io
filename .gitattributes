@@ -1,0 +1,16 @@
+# Git LFS — committed binaries (raw datasets stay git-ignored under data/)
+*.png  filter=lfs diff=lfs merge=lfs -text
+*.jpg  filter=lfs diff=lfs merge=lfs -text
+*.jpeg filter=lfs diff=lfs merge=lfs -text
+*.gif  filter=lfs diff=lfs merge=lfs -text
+*.webp filter=lfs diff=lfs merge=lfs -text
+*.pdf  filter=lfs diff=lfs merge=lfs -text
+*.parquet filter=lfs diff=lfs merge=lfs -text
+*.npy  filter=lfs diff=lfs merge=lfs -text
+*.npz  filter=lfs diff=lfs merge=lfs -text
+*.h5   filter=lfs diff=lfs merge=lfs -text
+*.zip  filter=lfs diff=lfs merge=lfs -text
+*.mp4  filter=lfs diff=lfs merge=lfs -text
+
+# Versioned git hooks are POSIX sh — force LF so they run under any shell
+.githooks/** text eol=lf
