@@ -1,6 +1,10 @@
-# Quarto build output (Do NOT commit the generated site, let CI/CD build it)
-/_site/
-/.quarto/
+# MkDocs build output (Do NOT commit; CI builds and deploys)
+/site/
+
+# Root datastore - raw/large datasets stay out of git (keep folder + docs)
+/data/*
+!/data/.gitkeep
+!/data/README.md
 
 # Python & Jupyter
 __pycache__/
