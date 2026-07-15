@@ -49,3 +49,9 @@ content grows.*
 | Authoring/splitting skills (minimalism) | `skill-authoring` |
 | Writing a blog post (template, plots, data, boundaries) | `README/BLOGGING.md` |
 | Large/binary files before commit | `git-lfs` |
+| Executing phased atomic commits with validation | `atomic-commit-executor` |
+| Splitting uncommitted changes into atomic commits | `commit-split` |
+| Regrouping commits into branches/PRs (read-only) | `commit-regroup` |
+| Reviewing a local branch diff (PR-style) | `local-pr-review` |
+| Extracting PR evidence from git history/diffs | `pr-evidence-diff` |
+| Writing a reviewer-focused PR description | `pr-orchestrator` |

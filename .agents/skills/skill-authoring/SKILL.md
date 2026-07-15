@@ -29,3 +29,9 @@ description: Use when creating or editing a skill under `.agents/skills/` — en
 - Split a skill only when it genuinely grows too large or covers two distinct
   triggers. Do not pre-emptively fragment; a single focused skill is preferred
   over several near-empty ones.
+
+## Keep the index in sync
+
+- Whenever you add, remove, or rename a skill, update the `AGENTS.md` pointer
+  table **in the same commit** so the task → skill map never drifts.
+- The pointer table must list every skill under `.agents/skills/`.
