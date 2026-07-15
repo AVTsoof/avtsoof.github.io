@@ -1,12 +1,7 @@
----
-name: blogging
-description: Use when writing, updating, or publishing a blog post — the single how-to-blog reference (copy-template flow, build.py + save_fig plots, data access, site boundaries).
----
+# Blogging Guide
 
-# Blogging
-
-The one how-to-blog reference. A post is a self-contained folder; the shared
-toolkit does the plumbing.
+How to write a post in this repo — for both the author and the agent. A post is
+a self-contained folder; the shared `avtsoof/` toolkit does the plumbing.
 
 ## New post
 
@@ -14,7 +9,7 @@ toolkit does the plumbing.
    hyphenated).
 2. Fill the front matter: `date`, `title`, `tags`, `categories`.
 3. Glance at existing `docs/blog/posts/*/index.md` titles first to avoid
-   repeating a topic (a quick look, not a tool).
+   repeating a topic.
 
 The **Material blog plugin** auto-builds the index/archive/categories/tags from
 each post's `date`. There is no registry to keep in sync.
