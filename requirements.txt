@@ -1,3 +1,11 @@
+# Editable install of the shared toolkit (avtsoof.common_utils)
+-e .
+
+# Site build
 mkdocs
 mkdocs-material
 mkdocs-git-revision-date-localized-plugin
+
+# Post build.py plotting
+plotly
+pandas
