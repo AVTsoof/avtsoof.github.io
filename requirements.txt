@@ -7,5 +7,8 @@ mkdocs-git-revision-date-localized-plugin
 plotly
 pandas
 
+# Notebook support
+ipykernel
+
 # Editable install of the shared toolkit
 -e .
