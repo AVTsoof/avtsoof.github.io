@@ -1,8 +1,8 @@
 # avtsoof.github.io
 
 Personal portfolio and research blog, built with [MkDocs](https://www.mkdocs.org/)
-+ [Material](https://squidfunk.github.io/mkdocs-material/) and published to GitHub
-Pages.
+and [Material](https://squidfunk.github.io/mkdocs-material/), and published to
+GitHub Pages.
 
 ## Setup
 
@@ -20,6 +20,15 @@ on top of it. Pass `--override` to recreate it without prompting:
 
 ```bash
 python bootstrap.py --override
+```
+
+## Project extras
+
+Sub-projects can declare extra dependencies in `projects/<slug>/requirements.txt`.
+Install them into the root `.venv` with:
+
+```bash
+python bootstrap.py --project <slug>
 ```
 
 ## Local preview
