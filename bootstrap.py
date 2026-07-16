@@ -36,6 +36,33 @@ def should_recreate(override: bool) -> bool:
     return False
 
 
+def available_projects() -> list[str]:
+    """Return sorted names of existing sub-project directories under projects/."""
+    projects_dir = ROOT / "projects"
+    if not projects_dir.exists():
+        return []
+    return sorted(p.name for p in projects_dir.iterdir() if p.is_dir())
+
+
+def install_project(slug: str) -> int:
+    """Install a sub-project's requirements into the existing root venv."""
+    if not VENV_DIR.exists():
+        print("Error: root .venv not found. Run bootstrap.py first.", file=sys.stderr)
+        return 1
+    req = ROOT / "projects" / slug / "requirements.txt"
+    if not req.exists():
+        print(f"Error: {req} not found.", file=sys.stderr)
+        return 1
+    print(f"Installing {req} into root .venv...")
+    subprocess.run(
+        [str(venv_python()), "-m", "pip", "install", "-r", str(req)],
+        check=True,
+        cwd=ROOT,
+    )
+    print("Done.")
+    return 0
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Set up the MkDocs blog environment.")
     parser.add_argument(
@@ -43,7 +70,22 @@ def main() -> int:
         action="store_true",
         help="Recreate the virtual environment from scratch without prompting.",
     )
+    projects = available_projects()
+    parser.add_argument(
+        "--project",
+        metavar="SLUG",
+        choices=projects or None,
+        help=(
+            f"Install a sub-project's requirements into the existing root .venv. "
+            f"Available: [{', '.join(projects)}]"
+            if projects
+            else "Install a sub-project's requirements into the existing root .venv."
+        ),
+    )
     args = parser.parse_args()
+
+    if args.project:
+        return install_project(args.project)
 
     if should_recreate(args.override):
         print("Removing existing virtual environment (.venv)...")
