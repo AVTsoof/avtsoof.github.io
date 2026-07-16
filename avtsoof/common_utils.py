@@ -6,6 +6,7 @@ only when a second post genuinely needs it.
 
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
 
@@ -22,8 +23,14 @@ DOCS: Path = REPO_ROOT / "docs"
 
 
 def data_dir(name: str) -> Path:
-    """Return (creating if needed) the git-ignored datastore dir ``data/<name>``."""
-    target = REPO_ROOT / "data" / name
+    """Return (creating if needed) datastore dir ``<base>/<name>``.
+
+    ``base`` defaults to the repo-local git-ignored ``data/`` folder. Set
+    ``AVTSOOF_DATA_DIR`` to override that base location cross-platform.
+    """
+    env_base = os.environ.get("AVTSOOF_DATA_DIR", "").strip()
+    base = Path(env_base).expanduser() if env_base else (REPO_ROOT / "data")
+    target = base / name
     target.mkdir(parents=True, exist_ok=True)
     return target
 

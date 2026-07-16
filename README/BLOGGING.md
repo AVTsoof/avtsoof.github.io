@@ -56,7 +56,11 @@ git-ignored, so plots must be built locally and committed for CI to find them).
 ## Data
 
 Raw/large datasets live under git-ignored root `data/`, reached via
-`avtsoof.common_utils.data_dir(name)`. **Never** commit raw data under `docs/`.
+`avtsoof.common_utils.data_dir(name)`.
+
+By default, `data_dir(name)` resolves to `data/<name>`. Set
+`AVTSOOF_DATA_DIR` to override the base path and resolve to
+`<AVTSOOF_DATA_DIR>/<name>` instead. **Never** commit raw data under `docs/`.
 
 ## Toolkit
 

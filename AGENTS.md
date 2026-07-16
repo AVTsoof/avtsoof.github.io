@@ -32,8 +32,10 @@ content grows.*
 - **R1 — Posts are self-contained folders:** each post lives in
   `docs/blog/posts/<slug>/` (lowercase, hyphenated) with its `index.md`, optional
   `build.py`, and `assets/`. *(Detail: `README/BLOGGING.md`.)*
-- **R2 — Root datastore:** all raw/binary datasets live under root `data/`, which
-  is fully git-ignored; never commit raw data under `docs/`. *(Detail:
+- **R2 — Root datastore:** by default, raw/binary datasets live under root
+  `data/` (git-ignored) and are reached in code via
+  `avtsoof.common_utils.data_dir(name)`; `AVTSOOF_DATA_DIR` may override the
+  base location. Never commit raw data under `docs/`. *(Detail:
   `README/BLOGGING.md`.)*
 - **R3 — Delegation:** load the skill that owns a task before acting; keep this
   file lean — when in doubt, a rule belongs in a skill, not here.

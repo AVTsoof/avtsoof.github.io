@@ -38,5 +38,7 @@ Open the printed local URL. Build the static site with `mkdocs build --strict`.
 | How to write a blog post (template, plots, data) | `README/BLOGGING.md` |
 | Task-specific conventions (git, style, LFS, …) | `.agents/skills/` |
 
-Raw datasets live under the git-ignored root `data/`; posts are self-contained
-folders under `docs/blog/posts/<slug>/`.
+Raw datasets default to the git-ignored root `data/` and are accessed from code
+via `avtsoof.common_utils.data_dir(name)` (optionally overridden with
+`AVTSOOF_DATA_DIR`); posts are self-contained folders under
+`docs/blog/posts/<slug>/`.
