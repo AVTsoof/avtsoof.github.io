@@ -5,6 +5,7 @@ mkdocs-git-revision-date-localized-plugin
 
 # Post build.py plotting
 plotly
+kaleido
 pandas
 
 # Notebook support
