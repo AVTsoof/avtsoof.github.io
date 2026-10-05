@@ -1,0 +1,14 @@
+site_name: AVTsoof
+site_url: https://avtsoof.github.io/
+
+theme:
+  name: material
+
+nav:
+  - Home: index.md
+  - Blog: blog/index.md
+  - About: about.md
+
+plugins:
+  - search
+  - blog
